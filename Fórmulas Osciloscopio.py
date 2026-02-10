@@ -8,8 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.close('all')
 
-%matplotlib qt
-
 delt_x=0.2
 delt_a=0.2
 x_1=np.array([8])
@@ -102,6 +100,7 @@ plt.yscale('log')
 plt.grid('True')
 plt.legend(fontsize=20)
 plt.gca().set_facecolor('aliceblue')
+plt.show()
 
 plt.figure()
 plt.tick_params(axis='both',labelsize=20)  
@@ -115,6 +114,7 @@ plt.xscale('log')
 plt.grid('True')
 plt.legend(fontsize=20)
 plt.gca().set_facecolor('aliceblue')
+plt.show()
 
 def tau(R,C):
     tau=R*C
