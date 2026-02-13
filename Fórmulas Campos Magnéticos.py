@@ -76,12 +76,12 @@ d=26e-3
 N=300
 I_teo=np.linspace(0.2,1.0,10000)
 I=np.array([0.2,0.4,0.6,0.8,1.0])
-B_exp=np.array([])
+B_exp=np.array([0.39,0.8,1.25,1.7,2.1])
 mu_0=np.pi*4e-7
-B_teo=mu_0*I_teo*N/L
-delt_I=0
-delt_B_exp=0
-ts1=t.ppf(1-0.05/2,3)
+B_teo=mu_0*I_teo*N/L*1000
+delt_I=0.01
+delt_B_exp=0.1
+ts1=t.ppf(1-0.01/2,3)
 
 m1e,c1e,delt_me,delt_ce=min_cuadrados(I,B_exp,ts1)
 
@@ -92,7 +92,7 @@ plt.plot(I_teo,m1e*I_teo+c1e,'-',color='red')
 plt.errorbar(I,B_exp,yerr=delt_B_exp,xerr=delt_I,fmt='o',color='red',ecolor='red',capsize=5)
 plt.scatter(I,B_exp,c='red',marker='o',label='$B_{experimental}$')
 plt.xlabel(r'$I~(A)$',fontsize=25)
-plt.ylabel(r'$B~(T)$',fontsize=25)
+plt.ylabel(r'$B~(mT)$',fontsize=25)
 plt.grid('True')
 plt.legend(fontsize=20)
 plt.gca().set_facecolor('aliceblue')
@@ -100,7 +100,7 @@ plt.show()
 
 print('Ejercicio 1')
 print('La pendiente de la regresión es: ',m1e,'±',delt_me)
-print('La pendiente de la regresión teórica es: ',mu_0*N/L)
+print('La pendiente de la regresión teórica es: ',mu_0*N/L*1000)
 
 # =============================================================================
 # 2) Campo magnético de la bobina en función del número de espiras:
@@ -108,9 +108,9 @@ print('La pendiente de la regresión teórica es: ',mu_0*N/L)
 
 N_teo=np.linspace(75,300,10000)
 N_2=np.array([75,150,300])
-B_teo2=mu_0*1*N_teo/(2*np.sqrt((L/2)**2+(d/2)**2))
-B_exp2=np.array([])
-ts2=t.ppf(1-0.05/2,1)
+B_teo2=mu_0*1*N_teo/(2*np.sqrt((L/2)**2+(d/2)**2))*1000
+B_exp2=np.array([0.62,1.04,2.1])
+ts2=t.ppf(1-0.25/2,1)
 
 m2e,c2e,delt_m2e,delt_c2e=min_cuadrados(N_2,B_exp2,ts2)
 
@@ -121,7 +121,7 @@ plt.plot(N_teo,m2e*N_teo+c2e,'-',color='red')
 plt.errorbar(N_2,B_exp2,yerr=delt_B_exp,xerr=0,fmt='o',color='red',ecolor='red',capsize=5)
 plt.scatter(N_2,B_exp2,c='red',marker='o',label='$B_{experimental}$')
 plt.xlabel(r'$N$',fontsize=25)
-plt.ylabel(r'$B~(T)$',fontsize=25)
+plt.ylabel(r'$B~(mT)$',fontsize=25)
 plt.grid('True')
 plt.legend(fontsize=20)
 plt.gca().set_facecolor('aliceblue')
@@ -129,27 +129,27 @@ plt.show()
 
 print('Ejercicio 2')
 print('La pendiente de la regresión es: ',m2e,'±',delt_m2e)
-print('La pendiente de la regresión teórica es: ',mu_0*1/(2*np.sqrt((L/2)**2+(d/2)**2)))
+print('La pendiente de la regresión teórica es: ',1000*mu_0*1/(2*np.sqrt((L/2)**2+(d/2)**2)))
 
 # =============================================================================
 # 3) Campo magnético de la bobina a lo largo de su eje:
 # =============================================================================
 
-B_exp3=np.array([])
-x=np.array([])
-delt_x=0
+B_exp3=np.array([0.16,1.12,1.82,1.96,2.1,2.1,2.1,2.1,2.1,2.1,2.1,2.01,1.8,1.08,0.2])
+x=np.array([-97,-81,-72,-62,-52,-32,-12,0,12,32,52,62,72,81,97])
+delt_x=1
 x_teo=np.linspace(x[0],x[-1],10000)
-a=x_teo+L/2
-b=x_teo-L/2
-B_teo3=mu_0*1*N/(2*L)*(a/(np.sqrt((d/2)**2+a**2))-b/(np.sqrt((d/2)**2+b**2)))
+a=x_teo*10**-3+L/2
+b=x_teo*10**-3-L/2
+B_teo3=mu_0*1*N/(2*L)*(a/(np.sqrt((d/2)**2+a**2))-b/(np.sqrt((d/2)**2+b**2)))*10**3
 
 plt.figure()
 plt.tick_params(axis='both',labelsize=20)  
 plt.plot(x_teo,B_teo3,label='$B_{teórico}$',color='blue')
 plt.errorbar(x,B_exp3,yerr=delt_B_exp,xerr=delt_x,fmt='o',color='red',ecolor='red',capsize=5)
 plt.scatter(x,B_exp3,c='red',marker='o',label='$B_{experimental}$')
-plt.xlabel(r'$x~(m)$',fontsize=25)
-plt.ylabel(r'$B~(T)$',fontsize=25)
+plt.xlabel(r'$x~(mm)$',fontsize=25)
+plt.ylabel(r'$B~(mT)$',fontsize=25)
 plt.grid('True')
 plt.legend(fontsize=20)
 plt.gca().set_facecolor('aliceblue')
@@ -165,19 +165,19 @@ def Ohm(I,delt_V,R=10):
     return V,delt_I    
 
 I_R=np.linspace(10e-3,30e-3,5)
-delt_V_R=0
+delt_V_R=1e-3
 V_R,delt_IR=Ohm(I_R,delt_V_R)
-fem_exp=np.array([])
-delt_fem_exp=0
+fem_exp=np.array([333,527,712,893,1074])*10**(-3)
+delt_fem_exp=1e-3
 f_4=10e3
 delt_f4=0
 w_4=2*np.pi*f_4
 delt_w4=2*np.pi*delt_f4
 N_sec=300
 A=np.pi*(0.5*41e-3)**2
-N_prima=0
-l_prima=0
-delt_l=0
+N_prima=480
+l_prima=41e-2
+delt_l=0.0005
 
 def fem_teo(N,A,N_prima,w,I,l,delt_I,delt_l,delt_w):
     fem_teo=mu_0*N*A*N_prima*w*I/l
@@ -185,7 +185,7 @@ def fem_teo(N,A,N_prima,w,I,l,delt_I,delt_l,delt_w):
     return fem_teo,delt_fem_teo
 
 I_teo4=np.linspace(10e-3,30e-3,10000)
-fem_teo4,delt_fem_teo4=fem_teo(N_sec,A,N_prima,w_4,I_teo4,l_prima,delt_IR,delt_l)
+fem_teo4,delt_fem_teo4=fem_teo(N_sec,A,N_prima,w_4,I_teo4,l_prima,delt_IR,delt_l,delt_w4)
 
 m3e,c3e,delt_m3e,delt_c3e=min_cuadrados(I_R,fem_exp,ts1)
 
@@ -213,11 +213,11 @@ print('La pendiente de la regresión teórica es: ',mu_0*N_sec*A*N_prima*w_4/l_p
 I_5=30e-3
 V_5,delt_I_5=Ohm(I_5,delt_V_R)
 f_5=np.linspace(1000,12000,5)
-delt_f_5=0
+delt_f_5=1
 w_5=2*np.pi*f_5
 delt_w_5=2*np.pi*delt_f_5
-fem_exp5=np.array([])
-delt_fem_exp5=0
+fem_exp5=np.array([197,434,673,923,1215])*10**(-3)
+delt_fem_exp5=1e-3
 f_teo=np.linspace(1000,12000,10000)
 w_teo=2*np.pi*f_teo
 fem_teo5,delt_fem_teo5=fem_teo(N_sec,A,N_prima,w_teo,I_5,l_prima,delt_I_5,delt_l,delt_w_5)
@@ -249,8 +249,8 @@ delt_f6=0
 w_6=2*np.pi*f_6
 delt_w6=2*np.pi*delt_f6
 N_6=np.array([100,200,300])
-fem_exp6=np.array([])
-delt_fem_exp6=0
+fem_exp6=np.array([375,708,1062])*10**(-3)
+delt_fem_exp6=1e-3
 N_teo=np.linspace(100,300,10000)
 fem_teo6,delt_fem_teo6=fem_teo(N_teo,A,N_prima,w_6,I_5,l_prima,delt_I_5,delt_l,delt_w6)
 m5e,c5e,delt_m5e,delt_c5e=min_cuadrados(N_6,fem_exp6,ts2)
