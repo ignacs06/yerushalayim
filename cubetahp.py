@@ -175,3 +175,28 @@ def punto_corte_analitico(sigma=tension/1000.0, rho=1000, g=9.81):
     return lambda_corte, v_corte, delt_lambda_corte, delt_v_corte  
 print("Punto de corte analitico:", punto_corte_analitico()[0]*1e3,'$\pm$',punto_corte_analitico()[2]*1e3, punto_corte_analitico()[1]*1e2, '$\pm$', punto_corte_analitico()[3][0]*1e2)
 print("Punto de corte numerico:", lambda_corte*1e3, v_corte*1e2)
+
+def angulos_interferencia(lamda, D, N):
+    # Minimos de interferencia de dos fuentes coherentes:
+    # D * sin(theta_N) = (2N+1) * lambda / 2
+    seno = (2 * N + 1) * lamda / (2 * D)
+    theta_deg = np.full_like(seno, np.nan, dtype=float)
+    validos = np.abs(seno) <= 1
+    theta_deg[validos] = np.degrees(np.arcsin(seno[validos]))
+    return theta_deg
+
+
+lambda_67 = 4.42e-3
+lambda_47 = 5.9e-3
+D_1 = 2.3e-2
+D_2 = 3.0e-2
+N = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+
+theta_67_1 = angulos_interferencia(lambda_67, D_1, N)
+theta_47 = angulos_interferencia(lambda_47, D_1, N)
+theta_67_2 = angulos_interferencia(lambda_67, D_2, N)
+
+print("N:", N)
+print("theta teoricos 67Hz, D1 (deg):", np.round(theta_67_1, 2))
+print("theta teoricos 47Hz, D1 (deg):", np.round(theta_47, 2))
+print("theta teoricos 67Hz, D2 (deg):", np.round(theta_67_2, 2))
