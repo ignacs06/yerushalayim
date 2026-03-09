@@ -181,9 +181,21 @@ def angulos_interferencia(lamda, D, N):
     # D * sin(theta_N) = (2N+1) * lambda / 2
     seno = (2 * N + 1) * lamda / (2 * D)
     theta_deg = np.full_like(seno, np.nan, dtype=float)
+    delt_theta_deg = np.full_like(seno, np.nan, dtype=float)
     validos = np.abs(seno) <= 1
     theta_deg[validos] = np.degrees(np.arcsin(seno[validos]))
-    return theta_deg
+
+    # Propagacion de incertidumbre en radianes y conversion final a grados
+    # Delta lambda = 0.1 mm, Delta D = 0.2 cm
+    delt_lambda = 0.1e-3  # m
+    delt_D = 0.1e-2       # m
+    den = np.sqrt(1 - seno[validos]**2)
+    dtheta_dlambda = (2 * N[validos] + 1) / (2 * D * den)
+    dtheta_dD = -((2 * N[validos] + 1) * lamda) / (2 * D**2 * den)
+    delt_theta_rad = np.sqrt((dtheta_dlambda * delt_lambda)**2 + (dtheta_dD * delt_D)**2)
+    delt_theta_deg[validos] = np.degrees(delt_theta_rad)
+
+    return theta_deg, delt_theta_deg
 
 
 lambda_67 = 4.42e-3
@@ -192,11 +204,19 @@ D_1 = 2.3e-2
 D_2 = 3.0e-2
 N = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
 
-theta_67_1 = angulos_interferencia(lambda_67, D_1, N)
-theta_47 = angulos_interferencia(lambda_47, D_1, N)
-theta_67_2 = angulos_interferencia(lambda_67, D_2, N)
+theta_67_1, delt_theta_67_1 = angulos_interferencia(lambda_67, D_1, N)
+theta_47, delt_theta_47 = angulos_interferencia(lambda_47, D_1, N)
+theta_67_2, delt_theta_67_2 = angulos_interferencia(lambda_67, D_2, N)
 
 print("N:", N)
 print("theta teoricos 67Hz, D1 (deg):", np.round(theta_67_1, 2))
 print("theta teoricos 47Hz, D1 (deg):", np.round(theta_47, 2))
 print("theta teoricos 67Hz, D2 (deg):", np.round(theta_67_2, 2))
+print("delt_theta 67Hz, D1 (deg):", np.round(delt_theta_67_1, 2))
+print("delt_theta 47Hz, D1 (deg):", np.round(delt_theta_47, 2))
+print("delt_theta 67Hz, D2 (deg):", np.round(delt_theta_67_2, 2))
+
+v4p=v4p*1e2
+iv4p=iv4p*1e2
+
+# %%
