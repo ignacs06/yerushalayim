@@ -16,15 +16,21 @@ mf=250.8
 Tf=293.16
 
 
-
 def C(cp,mc,Tc,Tm,mf,Tf):
     a=mc*(Tc-Tm)
     c=Tm-Tf
     b=mf*c
     C=cp*(a-b)/c
-    return C
+    i=0.01
+    imc=(Tc-Tf)*i/c
+    imf=-i
+    iTc=i*mc/b
+    iTf=i*mc*(Tc-Tm)/b**2
+    iTm=i*mc*(Tc-Tf)/b**2
+    iC=cp*np.sqrt(imc**2+imf**2+iTc**2+iTf**2+iTm**2)
+    return C,iC
 
-C1=C(cp,mc,Tc,Tm,mf,Tf) #J/K
+C1,C1_error=C(cp,mc,Tc,Tm,mf,Tf) #J/K
  
 
 Teb=370.96 
